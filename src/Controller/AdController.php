@@ -50,6 +50,8 @@ public function create(Request $request, ObjectManager $manager){
             $manager->persist($image);
         }
 
+        $ad->setAuthor($this->getUser());
+
         $manager->persist($ad);
         $manager->flush();
         
