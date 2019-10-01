@@ -77,7 +77,7 @@ public function create(Request $request, ObjectManager $manager){
  * Permet d'afficher le formulaire d'édition
  *
  * @Route("/ads/{slug}/edit", name="ads_edit")
- * @Security("is_granted('ROLE_USER') and user === ad.getAuthor()", message="Cette annonce n'est pas reliée à votre compte.")
+ * @Security("is_granted('ROLE_USER') and user === ad.getAuthor()")
  * 
  * @return Response
  */
@@ -129,7 +129,7 @@ public function edit(Ad $ad, Request $request, ObjectManager $manager) {
      * Permet de supprimer une annonce
      *
      * @Route("/ads/{slug}/delete", name="ads_delete")
-     * @Security("is_granted('ROLE_USER') and user === ad.getAuthor()", message="Cette annonce n'est pas reliée à votre compte.")
+     * @Security("is_granted('ROLE_USER') and user === ad.getAuthor()")
      * 
      * @return Response
      */
