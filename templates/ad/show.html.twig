@@ -14,6 +14,11 @@
         <strong> {{ad.rooms}} chambres </strong> pour <strong> {{ad.price}}&euro; </strong> par nuit.
         </p>
         <a href="#" class="btn btn-primary"> Cliquez ici pour réserver </a>
+        {% if app.user and app.user == ad.author %}
+        <a href="{{path('ads_edit', {'slug' : ad.slug})}}" class="btn btn-secondary">Modifier l'annonce</a>
+
+        <a href="{{path('ads_delete', {'slug' : ad.slug})}}" class="btn btn-danger" onclick="return confirm(`Voulez vous vraiment supprimer l'annonce : {{ad.title}} ?`)">Supprimer l'annonce</a>
+        {% endif %}
     </div>
 </div>
 
@@ -22,7 +27,7 @@
         <div class="col-md-8 mb-3">
             {{ ad.content | raw }}
 
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div id="carouselExampleIndicators" class="carousel slide mt-3" data-ride="carousel">
         <ol class="carousel-indicators">
                 {% for image in ad.images %}
                      <li data-target="#carouselExampleIndicators" data-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active"{% endif %}></li>
@@ -35,7 +40,7 @@
 
                  <div class="carousel-caption d-none d-md-block">
 
-                        <h5>{{ ad.title }}</h5>
+                        <h5 style="color:white">{{ ad.title }}</h5>
                        <p>{{ image.caption }}</p>
 
                  </div>

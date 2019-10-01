@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Ad;
 use Faker\Factory;
+use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\Image;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -21,6 +22,22 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $faker = Factory::create('FR-fr');
+
+        $adminRole = new Role();
+        $adminRole->setTitle('ROLE_ADMIN');
+        $manager->persist($adminRole);
+
+        $adminUser = new User();
+        $adminUser->setFirstName('Yannis')
+                  ->setLastName('Kecir')
+                  ->setEmail('ysk78csp@gmail.com')
+                  ->setHash($this->encoder->encodePassword($adminUser, 'yannis'))
+                  ->setPicture('https://scontent-cdg2-1.cdninstagram.com/vp/d14ceb7fc3b695153b5a1b843a312be0/5E308BF4/t51.2885-19/s150x150/67609342_2411284952526511_5477076307428769792_n.jpg?_nc_ht=scontent-cdg2-1.cdninstagram.com')
+                  ->setIntroduction('Je suis Yannis Kecir, 18 ans et milliardaire.')
+                  ->setDescription("Je suis un milliardaire qui a fait fortune dans l'immobilier à Dubaï et Los Angeles en passant par New-York et Londres")
+                  ->addUserRole($adminRole);
+        $manager->persist($adminUser);
+        
 
         // Nous gérons les utilisateurs
         $users = [];
