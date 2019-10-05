@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\PrePersist;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Date;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BookingRepository")
@@ -32,11 +34,15 @@ class Booking
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Date(message="Attention, la date doit être au bon format")
+     * @Assert\GreaterThan("today", message="La date d'arrivée doit être ultérieure à la date d'aujourd'hui")
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Date(message="Attention, la date doit être au bon format")
+     * @Assert\GreaterThan(propertyPath="startDate", message="La date de départ doit être plus éloignée que la date de départ")
      */
     private $endDate;
 
@@ -55,6 +61,48 @@ class Booking
      */
     private $comment;
 
+    public function isBookableDates() {
+        // 1) il faut connaître les dates qui sont impossible pour l'annonce
+        $notAvailablesDays = $this->ad->getNotAvailableDays();
+        // 2) Il faut comparer les dates choisies avec les dates impossibles
+        $bookingDays = $this->getDays();
+
+        $formatDay = function($day) {
+            return $day->format('Y-m-d');
+        };
+
+        // Tableau qui contient des chaines de caractères de mes journées
+        $days = array_map($formatDay, $bookingDays);
+
+        $notAvailable = array_map($formatDay, $notAvailablesDays);
+
+        foreach($days as $day) {
+            if(array_search($day, $notAvailable) !== false) return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Permet de récuperer un tableau des journées qui correspondent à ma réservation
+    *
+    * @return array
+    */
+
+    public function getDays() {
+        $resultat = range(
+            $this->startDate->getTimestamp(),
+            $this->endDate->getTimestamp(),
+            24 * 60 * 60
+        );
+
+        $days = array_map(function($dayTimestamp) {
+            return new \DateTime(date('Y-m-d', $dayTimestamp));
+        }, $resultat);
+
+        return $days;
+    }
+
     public function getDuration() {
         $diff = $this->endDate->diff($this->startDate);
         return $diff->days;
@@ -67,6 +115,8 @@ class Booking
      * 
      * @return void
      */
+
+
     public function prePersist() {
         if(empty($this->createdAt)) {
             $this->createdAt = new \DateTime();
@@ -77,6 +127,7 @@ class Booking
             $this->amount = $this->ad->getPrice() * $this->getDuration();
         }
     }
+
 
     public function getId(): ?int
     {
