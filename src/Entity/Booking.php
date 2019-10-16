@@ -4,8 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\PrePersist;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BookingRepository")
@@ -35,7 +35,7 @@ class Booking
     /**
      * @ORM\Column(type="datetime")
      * @Assert\Date(message="Attention, la date doit être au bon format")
-     * @Assert\GreaterThan("today", message="La date d'arrivée doit être ultérieure à la date d'aujourd'hui")
+     * @Assert\GreaterThan("today", message="La date d'arrivée doit être ultérieure à la date d'aujourd'hui", groups={"front"})
      */
     private $startDate;
 
@@ -74,7 +74,7 @@ class Booking
         // Tableau qui contient des chaines de caractères de mes journées
         $days = array_map($formatDay, $bookingDays);
 
-        $notAvailable = array_map($formatDay, $notAvailablesDays);
+        $notAvailable = array($formatDay, $notAvailablesDays);
 
         foreach($days as $day) {
             if(array_search($day, $notAvailable) !== false) return false;
@@ -112,6 +112,7 @@ class Booking
      * Callback appelé à chaque fois qu'on créé une réservation
      * 
      * @ORM\PrePersist
+     * @ORM\PreUpdate
      * 
      * @return void
      */

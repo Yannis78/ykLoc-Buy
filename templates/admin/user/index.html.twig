@@ -1,0 +1,51 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="my-5">Gestion des utilisateurs</h1>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th><h6>Id</h6></th>
+                    <th><h6>Nom</h6></th>
+                    <th><h6>Photo</h6></th>
+                    <th><h6>Email</h6></th>
+                    <th><h6>Introduction</h6></th>
+                    <th><h6>Description</h6></th>
+                    <th><h6>Nombre d'annonces</h6></th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for user in pagination.data %}
+                    <tr>
+                        <td>{{user.id}}</td>
+                        <td>{{user.fullName}}</td>
+                        <td>
+                            <img src="{{user.picture}}" class="avatar avatar-medium" alt="Photo de profil de l'utilisateur">
+                        </td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.introduction}}</td>
+                        <td>{{user.description}}</td>
+                        <td class="text-center">
+                            <span class="badge badge-primary rounded">
+                                {{user.ads | length}}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ path('admin_users_edit', {'id': user.id}) }}" class="btn btn-primary mb-1"><is class="fas fa-edit"></is></a>
+                            <a href="{{ path('admin_users_delete', {'id': user.id}) }}" class="btn btn-danger"><is class="fas fa-trash"></is></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+        {% include "admin/partials/pagination.html.twig" with {'route': "admin_users_index"} %}
+
+    </div>
+{% endblock %}

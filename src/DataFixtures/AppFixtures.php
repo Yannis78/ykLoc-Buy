@@ -8,6 +8,7 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\Image;
 use App\Entity\Booking;
+use App\Entity\Comment;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -44,7 +45,7 @@ class AppFixtures extends Fixture
         $users = [];
         $genres = ['male', 'female'];
 
-        for($i = 1; $i <= 10; $i++) {
+        for($i = 1; $i <= 25; $i++) {
             $user = new User();
 
             $genre = $faker->randomElement($genres);
@@ -70,7 +71,7 @@ class AppFixtures extends Fixture
 
         // Nous gérons les annonces
 
-        for($i = 1; $i <= 30; $i++) {
+        for($i = 1; $i <= 50; $i++) {
             $ad = new Ad();
 
 
@@ -102,7 +103,7 @@ class AppFixtures extends Fixture
             }
 
             // Gestion des réservations
-            for($j = 1; $j <= mt_rand(0, 10); $j++) {
+            for($j = 1; $j <= mt_rand(0, 3); $j++) {
                 $booking = new Booking();
 
                 $createdAt = $faker->dateTimeBetween('-6 months');
@@ -125,6 +126,17 @@ class AppFixtures extends Fixture
                         ->setComment($comment);
 
                 $manager->persist($booking);
+
+                // Gestion des commentaires
+                if(mt_rand(0, 2)) {
+                    $comment = new Comment();
+                    $comment->setContent($faker->paragraph())
+                            ->setRating(mt_rand(1, 5))
+                            ->setAuthor($booker)
+                            ->setAd($ad);
+                            
+                    $manager->persist($comment);
+                }
             }
 
             $manager->persist($ad);
